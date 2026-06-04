@@ -1,1 +1,24 @@
-/target
+```
+# Dependencies
+target/
+**/*.rs.bk
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Environment
+.env
+.env.local
+.env.*
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Rust-specific
+**/Cargo.lock
+```
