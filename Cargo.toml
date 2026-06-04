@@ -35,3 +35,14 @@ walkdir = "2.4"
 # For document storage
 sha2 = "0.10"
 hex = "0.4"
+
+# Testing dependencies
+[dev-dependencies]
+rand = "0.8"
+proptest = "1.4"
+tokio-test = "0.4"
+criterion = "0.5"
+
+[[bench]]
+name = "permission_bench"
+harness = false
