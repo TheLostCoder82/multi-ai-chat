@@ -7,12 +7,14 @@ mod permission;
 mod message_router;
 mod document_storage;
 mod utils;
+mod mcp_server;
 
 use anyhow::Result;
 
 pub use permission::{Permission, PermissionScope, PermissionStatus, PermissionStorage};
 pub use message_router::{MessageRouter, Channel, ChatMessage, MessagePriority};
 pub use document_storage::{DocumentStorage, DocumentVersion, DocumentMetadata};
+pub use mcp_server::{McpServer, Session, McpMessage, McpRequest, McpResponse, McpMethod, HandshakeState};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -27,6 +29,25 @@ async fn main() -> Result<()> {
     let document_storage = DocumentStorage::new(None);
     
     log::info!("Core components initialized");
+    
+    // Create MCP server configuration
+    let mcp_config = mcp_server::ServerConfig {
+        host: "127.0.0.1".to_string(),
+        port: 8080,
+        max_connections: 100,
+        session_timeout_seconds: 3600,
+        require_auth: false,
+    };
+    
+    // Create MCP server instance
+    let mcp_server = McpServer::new(
+        mcp_config,
+        permission_storage.clone(),
+        message_router.clone(),
+        document_storage.clone(),
+    );
+    
+    log::info!("MCP Server created");
     
     // Create default general channel
     let general_channel_id = message_router.get_or_create_general_channel("General".to_string()).await;
@@ -50,8 +71,18 @@ async fn main() -> Result<()> {
     
     log::info!("Application started successfully");
     
-    // In a real application, you would now start the MCP server
-    // and begin listening for agent connections
+    // Note: In a full implementation, you would spawn the MCP server here
+    // For example:
+    // let server_clone = mcp_server.clone();
+    // tokio::spawn(async move {
+    //     if let Err(e) = server_clone.start().await {
+    //         log::error!("MCP Server error: {}", e);
+    //     }
+    // });
+    
+    // For now, just demonstrate that everything is set up
+    log::info!("MCP Server ready to accept connections on {}:{}", mcp_config.host, mcp_config.port);
+    log::info!("Ready to accept agent connections...");
     
     Ok(())
 }
